@@ -4,6 +4,26 @@ main.py : 프로그램이 시작되는 파일
 """
 
 
+class Quiz:
+    """퀴즈 한 문제를 표현하는 설계도."""
+
+    def __init__(self, question, choices, answer):
+        # 이 퀴즈가 가지고 있는 정보(속성)를 자기 몸에 새겨 넣는다
+        self.question = question   # 문제 (글자)
+        self.choices = choices     # 선택지 4개 (목록)
+        self.answer = answer       # 정답 번호 (1~4 중 하나)
+
+    def show(self, number):
+        """문제와 선택지를 화면에 출력한다."""
+        print(f"[문제 {number}] {self.question}")
+        for index, choice in enumerate(self.choices, start=1):
+            print(f"  {index}. {choice}")
+
+    def is_correct(self, user_answer):
+        """사용자가 낸 답이 정답인지 True / False 로 알려준다."""
+        return user_answer == self.answer
+
+
 def print_menu():
     """메뉴 화면을 출력한다."""
     print()
@@ -44,6 +64,19 @@ def ask_number(prompt, min_value, max_value):
         return number
 
 
+def demo_quiz():
+    """3단계 확인용 임시 함수 (다음 단계에서 삭제합니다)."""
+    q = Quiz(
+        question="세상에서 가장 큰 동물은?",
+        choices=["아프리카코끼리", "대왕고래", "기린", "백상아리"],
+        answer=2,
+    )
+
+    q.show(1)
+    print("정답은 2번:", q.is_correct(2))   # True 가 나와야 정상
+    print("정답은 3번:", q.is_correct(3))   # False 가 나와야 정상
+
+
 def run():
     """메뉴를 반복해서 보여주고, 사용자의 선택을 처리한다."""
     while True:
@@ -73,4 +106,5 @@ def main():
 
 
 if __name__ == "__main__":
+    # demo_quiz()
     main()
