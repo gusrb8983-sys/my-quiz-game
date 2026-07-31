@@ -24,6 +24,36 @@ class Quiz:
         return user_answer == self.answer
 
 
+# ── 동물 퀴즈 5개를 Quiz 객체로 만들어서 리스트에 담아둔다 ──
+DEFAULT_QUIZZES = [
+    Quiz(
+        question="세상에서 가장 큰 동물은?",
+        choices=["아프리카코끼리", "대왕고래", "기린", "백상아리"],
+        answer=2,
+    ),
+    Quiz(
+        question="지상에서 가장 빠른 동물은?",
+        choices=["치타", "사자", "말", "타조"],
+        answer=1,
+    ),
+    Quiz(
+        question="판다가 주로 먹는 음식은?",
+        choices=["대나무", "물고기", "고기", "곤충"],
+        answer=1,
+    ),
+    Quiz(
+        question="다음 중 밤에 활동하는(야행성) 동물은?",
+        choices=["부엉이", "닭", "비둘기", "참새"],
+        answer=1,
+    ),
+    Quiz(
+        question="다음 중 알을 낳는 포유류는?",
+        choices=["오리너구리", "고양이", "코알라", "캥거루"],
+        answer=1,
+    ),
+]
+
+
 def print_menu():
     """메뉴 화면을 출력한다."""
     print()
@@ -43,38 +73,32 @@ def ask_number(prompt, min_value, max_value):
     while True:
         raw = input(prompt).strip()
 
-        # 1) 그냥 Enter만 누른 경우
         if raw == "":
             print(f"⚠️ 아무것도 입력하지 않았습니다. {min_value}-{max_value} 사이의 숫자를 입력하세요.")
             continue
 
-        # 2) 숫자가 아닌 글자를 입력한 경우 (예: abc)
         if not raw.isdigit():
             print(f"⚠️ 잘못된 입력입니다. {min_value}-{max_value} 사이의 숫자를 입력하세요.")
             continue
 
         number = int(raw)
 
-        # 3) 숫자지만 범위를 벗어난 경우 (예: 9)
         if number < min_value or number > max_value:
             print(f"⚠️ 잘못된 입력입니다. {min_value}-{max_value} 사이의 숫자를 입력하세요.")
             continue
 
-        # 여기까지 왔다면 올바른 입력이다
         return number
 
 
-def demo_quiz():
-    """3단계 확인용 임시 함수 (다음 단계에서 삭제합니다)."""
-    q = Quiz(
-        question="세상에서 가장 큰 동물은?",
-        choices=["아프리카코끼리", "대왕고래", "기린", "백상아리"],
-        answer=2,
-    )
+def show_all_quizzes(quizzes):
+    """3단계 확인용: 저장된 퀴즈 전부를 화면에 뿌려본다."""
+    if not quizzes:
+        print("등록된 퀴즈가 없습니다.")
+        return
 
-    q.show(1)
-    print("정답은 2번:", q.is_correct(2))   # True 가 나와야 정상
-    print("정답은 3번:", q.is_correct(3))   # False 가 나와야 정상
+    for index, q in enumerate(quizzes, start=1):
+        q.show(index)
+        print()
 
 
 def run():
@@ -88,7 +112,7 @@ def run():
         elif choice == 2:
             print("👉 준비 중인 기능입니다. (퀴즈 추가)")
         elif choice == 3:
-            print("👉 준비 중인 기능입니다. (퀴즈 목록)")
+            show_all_quizzes(DEFAULT_QUIZZES)
         elif choice == 4:
             print("👉 준비 중인 기능입니다. (점수 확인)")
         elif choice == 5:
@@ -106,5 +130,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # demo_quiz()
     main()
