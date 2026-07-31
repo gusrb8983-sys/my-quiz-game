@@ -8,7 +8,6 @@ class Quiz:
     """퀴즈 한 문제를 표현하는 설계도."""
 
     def __init__(self, question, choices, answer):
-        # 이 퀴즈가 가지고 있는 정보(속성)를 자기 몸에 새겨 넣는다
         self.question = question   # 문제 (글자)
         self.choices = choices     # 선택지 4개 (목록)
         self.answer = answer       # 정답 번호 (1~4 중 하나)
@@ -91,7 +90,7 @@ def ask_number(prompt, min_value, max_value):
 
 
 def show_all_quizzes(quizzes):
-    """3단계 확인용: 저장된 퀴즈 전부를 화면에 뿌려본다."""
+    """저장된 퀴즈 전부를 화면에 뿌려본다."""
     if not quizzes:
         print("등록된 퀴즈가 없습니다.")
         return
@@ -101,6 +100,37 @@ def show_all_quizzes(quizzes):
         print()
 
 
+def play_quiz(quizzes):
+    """퀴즈를 순서대로 출제하고, 정답 여부를 판정한 뒤 결과를 보여준다."""
+    if not quizzes:
+        print("😢 풀 수 있는 퀴즈가 없습니다. 먼저 퀴즈를 추가해주세요.")
+        return
+
+    total = len(quizzes)
+    print(f"📝 퀴즈를 시작합니다! (총 {total}문제)")
+    print("-" * 40)
+
+    correct_count = 0
+
+    for index, q in enumerate(quizzes, start=1):
+        q.show(index)
+        user_answer = ask_number("정답 입력: ", 1, 4)
+
+        if q.is_correct(user_answer):
+            print("✅ 정답입니다!")
+            correct_count += 1
+        else:
+            print(f"❌ 오답입니다. 정답은 {q.answer}번입니다.")
+
+        print("-" * 40)
+
+    score = int(correct_count / total * 100)
+
+    print("=" * 40)
+    print(f"🏆 결과: {total}문제 중 {correct_count}문제 정답! ({score}점)")
+    print("=" * 40)
+
+
 def run():
     """메뉴를 반복해서 보여주고, 사용자의 선택을 처리한다."""
     while True:
@@ -108,7 +138,7 @@ def run():
         choice = ask_number("선택: ", 1, 5)
 
         if choice == 1:
-            print("👉 준비 중인 기능입니다. (퀴즈 풀기)")
+            play_quiz(DEFAULT_QUIZZES)
         elif choice == 2:
             print("👉 준비 중인 기능입니다. (퀴즈 추가)")
         elif choice == 3:
