@@ -83,3 +83,5 @@ my-quiz-game/
 - [퀴즈 풀기](docs/screenshots/play.png)
 - [퀴즈 추가](docs/screenshots/add_quiz.png)
 - [점수 확인](docs/screenshots/score.png)
+
+> 이 줄은 clone/pull 실습을 위해 추가되었습니다.
