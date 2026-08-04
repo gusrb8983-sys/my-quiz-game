@@ -104,5 +104,5 @@ my-quiz-game/
 | 퀴즈 추가 | [add_quiz.png](docs/screenshots/add_quiz.png) |
 | 점수 확인 | [score.png](docs/screenshots/score.png) |
 | 개발 환경 | [dev-environment.png](docs/screenshots/dev-environment.png) |
-| Git 로그 | [git log --oneline --graph.png](docs/screenshots/git log --oneline --graph.png) |
+| Git 로그 | [git-log.png](docs/screenshots/git log --oneline --graph.png) |
 | Git clone/pull 기록 | [git-reflog.png](docs/screenshots/git-reflog.png) |
