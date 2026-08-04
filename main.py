@@ -52,6 +52,9 @@ DEFAULT_QUIZZES = [
     ),
 ]
 
+# 지금까지 기록된 최고 점수. 아직 한 번도 안 풀었으면 None 으로 둔다.
+best_score = None
+
 
 def print_menu():
     """메뉴 화면을 출력한다."""
@@ -118,6 +121,8 @@ def list_quizzes(quizzes):
 
 def play_quiz(quizzes):
     """퀴즈를 순서대로 출제하고, 정답 여부를 판정한 뒤 결과를 보여준다."""
+    global best_score  # 이 함수 안에서 바깥의 best_score를 직접 바꾸겠다는 선언
+
     if not quizzes:
         print("😢 풀 수 있는 퀴즈가 없습니다. 먼저 퀴즈를 추가해주세요.")
         return
@@ -144,6 +149,11 @@ def play_quiz(quizzes):
 
     print("=" * 40)
     print(f"🏆 결과: {total}문제 중 {correct_count}문제 정답! ({score}점)")
+
+    if best_score is None or score > best_score:
+        best_score = score
+        print("🎉 새로운 최고 점수입니다!")
+
     print("=" * 40)
 
 
@@ -166,6 +176,15 @@ def add_quiz(quizzes):
     print("✅ 퀴즈가 추가되었습니다!")
 
 
+def show_score():
+    """지금까지의 최고 점수를 보여준다."""
+    if best_score is None:
+        print("😅 아직 퀴즈를 푼 기록이 없습니다. 먼저 퀴즈를 풀어보세요!")
+        return
+
+    print(f"🏆 최고 점수: {best_score}점")
+
+
 def run():
     """메뉴를 반복해서 보여주고, 사용자의 선택을 처리한다."""
     while True:
@@ -179,7 +198,7 @@ def run():
         elif choice == 3:
             list_quizzes(DEFAULT_QUIZZES)
         elif choice == 4:
-            print("👉 준비 중인 기능입니다. (점수 확인)")
+            show_score()
         elif choice == 5:
             print("👋 게임을 종료합니다. 안녕히 가세요!")
             break
