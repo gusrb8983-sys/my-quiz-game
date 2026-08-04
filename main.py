@@ -89,6 +89,18 @@ def ask_number(prompt, min_value, max_value):
         return number
 
 
+def ask_text(prompt):
+    """빈 값이 아닌 글자를 입력할 때까지 계속 물어보고, 그 글자를 돌려준다."""
+    while True:
+        raw = input(prompt).strip()
+
+        if raw == "":
+            print("⚠️ 아무것도 입력하지 않았습니다. 다시 입력해주세요.")
+            continue
+
+        return raw
+
+
 def show_all_quizzes(quizzes):
     """저장된 퀴즈 전부를 화면에 뿌려본다."""
     if not quizzes:
@@ -131,6 +143,25 @@ def play_quiz(quizzes):
     print("=" * 40)
 
 
+def add_quiz(quizzes):
+    """새 퀴즈를 입력받아 quizzes 리스트에 추가한다."""
+    print("📌 새로운 퀴즈를 추가합니다.")
+
+    question = ask_text("문제를 입력하세요: ")
+
+    choices = []
+    for i in range(1, 5):
+        choice = ask_text(f"선택지 {i}: ")
+        choices.append(choice)
+
+    answer = ask_number("정답 번호 (1-4): ", 1, 4)
+
+    new_quiz = Quiz(question=question, choices=choices, answer=answer)
+    quizzes.append(new_quiz)
+
+    print("✅ 퀴즈가 추가되었습니다!")
+
+
 def run():
     """메뉴를 반복해서 보여주고, 사용자의 선택을 처리한다."""
     while True:
@@ -140,7 +171,7 @@ def run():
         if choice == 1:
             play_quiz(DEFAULT_QUIZZES)
         elif choice == 2:
-            print("👉 준비 중인 기능입니다. (퀴즈 추가)")
+            add_quiz(DEFAULT_QUIZZES)
         elif choice == 3:
             show_all_quizzes(DEFAULT_QUIZZES)
         elif choice == 4:
