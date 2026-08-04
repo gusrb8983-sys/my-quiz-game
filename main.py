@@ -5,6 +5,7 @@ main.py : 프로그램이 시작되는 파일
 
 import json
 import os
+import random
 
 STATE_FILE = "state.json"   # 퀴즈와 최고 점수를 저장할 파일 (프로젝트 루트)
 
@@ -168,18 +169,23 @@ class QuizGame:
         print("=" * 40)
 
     def play_quiz(self):
-        """퀴즈를 순서대로 출제하고, 정답 여부를 판정한 뒤 결과를 보여준다."""
+        """퀴즈를 순서를 섞어 출제하고, 정답 여부를 판정한 뒤 결과를 보여준다."""
         if not self.quizzes:
             print("😢 풀 수 있는 퀴즈가 없습니다. 먼저 퀴즈를 추가해주세요.")
             return
 
-        total = len(self.quizzes)
+        # self.quizzes 자체를 섞으면 목록(3번 메뉴) 순서까지 바뀌어버리므로
+        # 복사본을 만들어 그 복사본만 섞는다.
+        quiz_order = self.quizzes.copy()
+        random.shuffle(quiz_order)
+
+        total = len(quiz_order)
         print(f"📝 퀴즈를 시작합니다! (총 {total}문제)")
         print("-" * 40)
 
         correct_count = 0
 
-        for index, q in enumerate(self.quizzes, start=1):
+        for index, q in enumerate(quiz_order, start=1):
             q.show(index)
             user_answer = ask_number("정답 입력: ", 1, 4)
 
