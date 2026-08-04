@@ -101,15 +101,19 @@ def ask_text(prompt):
         return raw
 
 
-def show_all_quizzes(quizzes):
-    """저장된 퀴즈 전부를 화면에 뿌려본다."""
+def list_quizzes(quizzes):
+    """저장된 퀴즈 목록을 문제만 간단히 보여준다."""
     if not quizzes:
-        print("등록된 퀴즈가 없습니다.")
+        print("📋 등록된 퀴즈가 없습니다.")
         return
 
+    print(f"📋 등록된 퀴즈 목록 (총 {len(quizzes)}개)")
+    print("-" * 40)
+
     for index, q in enumerate(quizzes, start=1):
-        q.show(index)
-        print()
+        print(f"[{index}] {q.question}")
+
+    print("-" * 40)
 
 
 def play_quiz(quizzes):
@@ -173,7 +177,7 @@ def run():
         elif choice == 2:
             add_quiz(DEFAULT_QUIZZES)
         elif choice == 3:
-            show_all_quizzes(DEFAULT_QUIZZES)
+            list_quizzes(DEFAULT_QUIZZES)
         elif choice == 4:
             print("👉 준비 중인 기능입니다. (점수 확인)")
         elif choice == 5:
