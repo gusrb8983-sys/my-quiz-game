@@ -3,6 +3,11 @@
 main.py : 프로그램이 시작되는 파일
 """
 
+import json
+import os
+
+STATE_FILE = "state.json"   # 퀴즈와 최고 점수를 저장할 파일 (프로젝트 루트)
+
 
 class Quiz:
     """퀴즈 한 문제를 표현하는 설계도."""
@@ -23,9 +28,7 @@ class Quiz:
         return user_answer == self.answer
 
 
-# ── 동물 퀴즈 5개를 Quiz 객체로 만들어서 리스트에 담아둔다 ──
-# 이 리스트는 "게임을 새로 시작할 때 기본으로 쓸 재료"일 뿐이다.
-# 실제로 게임 중 추가/삭제되는 목록은 QuizGame 객체 안의 self.quizzes 이다.
+# ── 동물 퀴즈 5개. state.json이 없거나 손상됐을 때 쓸 기본 데이터 ──
 DEFAULT_QUIZZES = [
     Quiz(
         question="세상에서 가장 큰 동물은?",
@@ -92,14 +95,64 @@ def ask_text(prompt):
 class QuizGame:
     """게임 전체를 관리하는 설계도.
     퀴즈 목록과 최고 점수를 속성으로 가지고,
-    메뉴 표시/퀴즈 풀기/추가/목록/점수 확인을 메서드로 제공한다."""
+    메뉴 표시/퀴즈 풀기/추가/목록/점수 확인/저장·불러오기를 메서드로 제공한다."""
 
     def __init__(self):
-        # DEFAULT_QUIZZES를 그대로 쓰지 않고 list()로 복사해서 담는다.
-        # 그대로 쓰면 이 게임에서 퀴즈를 추가할 때마다
-        # 원본 DEFAULT_QUIZZES까지 같이 늘어나버리기 때문이다.
-        self.quizzes = list(DEFAULT_QUIZZES)
-        self.best_score = None   # 아직 한 번도 안 풀었으면 None
+        self.quizzes = []
+        self.best_score = None
+        self.load()   # 프로그램이 시작될 때 저장된 데이터가 있으면 불러온다
+
+    # ── 파일 저장 / 불러오기 ──────────────────────────────
+
+    def load(self):
+        """state.json에서 데이터를 불러온다.
+        파일이 없거나 손상되었으면 기본 퀴즈 데이터로 시작한다."""
+
+        if not os.path.exists(STATE_FILE):
+            print("📂 저장된 데이터가 없어 기본 퀴즈로 시작합니다.")
+            self.quizzes = list(DEFAULT_QUIZZES)
+            self.best_score = None
+            return
+
+        try:
+            with open(STATE_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            self.quizzes = [
+                Quiz(item["question"], item["choices"], item["answer"])
+                for item in data["quizzes"]
+            ]
+            self.best_score = data.get("best_score")
+
+            score_text = self.best_score if self.best_score is not None else "없음"
+            print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {score_text})")
+
+        except (json.JSONDecodeError, KeyError, TypeError):
+            print("⚠️ 저장된 데이터가 손상되어 있어 기본 퀴즈로 초기화합니다.")
+            self.quizzes = list(DEFAULT_QUIZZES)
+            self.best_score = None
+
+    def save(self):
+        """현재 퀴즈 목록과 최고 점수를 state.json에 저장한다."""
+        data = {
+            "quizzes": [
+                {
+                    "question": q.question,
+                    "choices": q.choices,
+                    "answer": q.answer,
+                }
+                for q in self.quizzes
+            ],
+            "best_score": self.best_score,
+        }
+
+        try:
+            with open(STATE_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except OSError:
+            print("⚠️ 저장 중 문제가 발생했습니다. (변경사항이 저장되지 않았을 수 있습니다)")
+
+    # ── 메뉴 기능들 ──────────────────────────────────────
 
     def show_menu(self):
         """메뉴 화면을 출력한다."""
@@ -149,6 +202,8 @@ class QuizGame:
 
         print("=" * 40)
 
+        self.save()   # 점수가 바뀌었을 수 있으니 바로 저장
+
     def add_quiz(self):
         """새 퀴즈를 입력받아 self.quizzes에 추가한다."""
         print("📌 새로운 퀴즈를 추가합니다.")
@@ -166,6 +221,8 @@ class QuizGame:
         self.quizzes.append(new_quiz)
 
         print("✅ 퀴즈가 추가되었습니다!")
+
+        self.save()   # 새 퀴즈가 사라지지 않도록 바로 저장
 
     def list_quizzes(self):
         """저장된 퀴즈 목록을 문제만 간단히 보여준다."""
@@ -204,6 +261,7 @@ class QuizGame:
             elif choice == 4:
                 self.show_score()
             elif choice == 5:
+                self.save()
                 print("👋 게임을 종료합니다. 안녕히 가세요!")
                 break
 
@@ -215,7 +273,8 @@ def main():
         game.run()
     except (KeyboardInterrupt, EOFError):
         print()
-        print("👋 프로그램을 안전하게 종료합니다.")
+        print("👋 지금까지의 내용을 저장하고 안전하게 종료합니다.")
+        game.save()
 
 
 if __name__ == "__main__":
